@@ -1,0 +1,36 @@
+steps:
+  # - task: ms-vseng.MicroBuildTasks.30666190-6959-11e5-9f96-f56098202fef.MicroBuildSigningPlugin@2
+  #   displayName: Install signing plugin
+  #   condition: and(succeeded(), eq(variables['SignType'], 'real'))
+  #   inputs:
+  #     signType: '$(SignType)'
+
+  # - task: UseDotNet@2
+  #   displayName: Use .NET Core SDK 3.1.x
+  #   inputs:
+  #     packageType: sdk
+  #     version: 3.1.x
+  
+  - script: dotnet --version
+  - script: dotnet nuget --version
+  - script: dotnet --list-sdks
+
+  - task: DotNetCoreCLI@2
+    displayName: Compile common code and Windows Helpers
+    inputs:
+      command: build
+      projects: 'Git-Credential-Manager.sln'
+      arguments: '--configuration=Windows$(configuration) -v:d'
+
+  - script: dotnet build -c:Windows$(configuration) -v:d
+    displayName: cli build
+
+  # - task: DotNetCoreCLI@2
+  #   displayName: Run common unit tests
+  #   inputs:
+  #     command: test
+  #     projects: 'Git-Credential-Manager.sln'
+  #     arguments: '--configuration=Mac$(configuration)'
+  #     publishTestResults: true
+  #     testRunTitle: 'Unit tests (Windows)'
+
